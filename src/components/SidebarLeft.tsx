@@ -27,83 +27,17 @@ type Timeline = {
 
 const timelineData: Timeline[] = [
   {
-    label: "Today",
+    label: "Open Manipulator X",
     timelines: [
       {
-        href: "tag-generator",
-        title: "Tag generator"
+        href: "llm-pick-and-place",
+        title: "LLM Pick and Place",
       },
-      {
-        href: "title-generator",
-        title: "Title generator"
-      },
-      {
-        href: "image-editor",
-        title: "Image editor"
-      },
-      {
-        href: "video-maker",
-        title: "Video maker"
-      },
-      {
-        href: "audio-mixer",
-        title: "Audio mixer"
-      }
     ]
   },
-  {
-    label: "Yesterday",
-    timelines: [
-      {
-        href: "article-editor",
-        title: "Article editor"
-      },
-      {
-        href: "chart-generator",
-        title: "Chart generator"
-      },
-      {
-        href: "diagram-creator",
-        title: "Diagram creator"
-      },
-      {
-        href: "calendar-planner",
-        title: "Calendar planner"
-      },
-      {
-        href: "task-tracker",
-        title: "Task tracker"
-      }
-    ]
-  },
-  {
-    label: "Last Week",
-    timelines: [
-      {
-        href: "code-editor",
-        title: "Code editor"
-      },
-      {
-        href: "presentation-builder",
-        title: "Presentation builder"
-      },
-      {
-        href: "music-composer",
-        title: "Music composer"
-      },
-      {
-        href: "notebook-app",
-        title: "Notebook app"
-      },
-      {
-        href: "game-designer",
-        title: "Game designer"
-      }
-    ]
-  }
 ];
 
-export default function Sidebar({}: Props) {
+export default function SidebarLeft({}: Props) {
   const [isSidebar, setSidebar] = useState(true);
 
   function toggleSidebar() {
