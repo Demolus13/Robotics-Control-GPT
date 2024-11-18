@@ -28,7 +28,7 @@ export default function RootLayout({
       >
         <SidebarLeft />
         {/* sidebar */}
-        <main className="min-h-screen  w-full p-4">{children}</main>
+        <main className="min-h-screen  w-full">{children}</main>
       </body>
     </html>
   );
