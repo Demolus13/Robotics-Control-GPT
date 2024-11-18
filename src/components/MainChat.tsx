@@ -29,10 +29,11 @@ export default function MainChat() {
     const [selectedModel, setSelectedModel] = useState(models[0]);
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [dropdownWidth, setDropdownWidth] = useState(0);
-    const [messages, setMessages] = useState<string[]>([]);
+    const [messages, setMessages] = useState<[string, string][]>([]);
     const [inputValue, setInputValue] = useState("");
     const [isVisible, setIsVisible] = useState(true);
     const buttonRef = useRef<HTMLButtonElement>(null);
+    const messagesEndRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         if (buttonRef.current) {
@@ -52,6 +53,12 @@ export default function MainChat() {
         }
     }, [messages]);
 
+    useEffect(() => {
+        if (messagesEndRef.current) {
+            messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+        }
+    }, [messages]);
+
     const handleModelChange = (model: string) => {
         setSelectedModel(model);
         setDropdownOpen(false);
@@ -60,8 +67,12 @@ export default function MainChat() {
     const handleSendMessage = (e?: React.FormEvent) => {
         if (e) e.preventDefault();
         if (inputValue.trim()) {
-            setMessages([...messages, inputValue]);
+            setMessages([...messages, ["user", inputValue]]);
             setInputValue("");
+
+            setTimeout(() => {
+                setMessages((prevMessages) => [...prevMessages, ["chatbot", "I'm sorry, I'm just a demo. I don't have the ability to respond to messages yet. Please try again later."]]);
+            }, 500);
         }
     };
 
@@ -108,7 +119,7 @@ export default function MainChat() {
                 </main>
             )}
 
-            <section className={`max-w-3xl mx-auto flex flex-col w-[42.5rem] h-full justify-end`}>
+            <section className={`max-w-3xl mx-auto flex flex-col w-[42.5rem] justify-end  ${isVisible ? '' : 'gap-4'} `} style={{ height: "calc(100vh - 100px)" }}>
                 {/* card */}
                 {isVisible && (
                     <div className={`grid grid-cols-2 gap-3 transition-opacity duration-200 ${messages.length === 0 ? 'opacity-100' : 'opacity-0'}`}>
@@ -118,15 +129,27 @@ export default function MainChat() {
                     </div>
                 )}
                 {/* bottom section */}
-                <div className={`p-4 rounded-xl transition-all duration-500 ease-out ${isVisible ? 'translate-y-20 opacity-0' : 'opacity-100'} overflow-y-auto`}>
-                    {messages.map((message, index) => (
-                        <div
-                            key={index}
-                            className={"p-2 bg-[#1f1f1f] rounded-xl mb-4"}
-                        >
-                            {message}
+                <div className={`flex flex-col gap-4 p-4 pb-0 rounded-xl transition-all duration-500 ease-out ${isVisible ? 'translate-y-10 opacity-0' : 'opacity-100'} overflow-y-auto`}>
+                    {messages.map(([sender, text], index) => (
+                        <div key={index}>
+                            {sender === "user" ? (
+                                <div className="flex items-center justify-end">
+                                    <div className="p-2 bg-[#1f1f1f] rounded-xl max-w-[70%] ml-2">
+                                        {text}
+                                    </div>
+                                    <img src="/assets/user-icon.svg" alt="User" className="h-8 w-8 ml-2 bg-white rounded-full p-1" />
+                                </div>
+                            ) : (
+                                <div className="flex items-center">
+                                    <img src="/assets/chatgpt-log.svg" alt="ChatGPT" className="h-8 w-8 mr-2 bg-white rounded-full p-1" />
+                                    <div className="p-2 rounded-xl mr-auto">
+                                        {text}
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     ))}
+                    <div ref={messagesEndRef} />
                 </div>
 
                 {/* Searchbar */}
