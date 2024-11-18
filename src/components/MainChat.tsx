@@ -32,6 +32,7 @@ export default function MainChat() {
     const [messages, setMessages] = useState<[string, string][]>([]);
     const [inputValue, setInputValue] = useState("");
     const [isVisible, setIsVisible] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
     const buttonRef = useRef<HTMLButtonElement>(null);
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -69,9 +70,11 @@ export default function MainChat() {
         if (inputValue.trim()) {
             setMessages([...messages, ["user", inputValue]]);
             setInputValue("");
+            setIsLoading(true);
 
             setTimeout(() => {
                 setMessages((prevMessages) => [...prevMessages, ["chatbot", "I'm sorry, I'm just a demo. I don't have the ability to respond to messages yet. Please try again later."]]);
+                setIsLoading(false);
             }, 500);
         }
     };
@@ -106,6 +109,54 @@ export default function MainChat() {
                 )}
             </div>
 
+            <MainSection
+                isVisible={isVisible}
+                messages={messages}
+                handleSendMessage={handleSendMessage}
+                inputValue={inputValue}
+                setInputValue={setInputValue}
+                messagesEndRef={messagesEndRef}
+                isLoading={isLoading}
+            />
+        </div>
+    );
+};
+
+type CardProp = {
+    heading: string;
+    description: string;
+};
+
+function Card(props: CardProp) {
+    return (
+        <button className="w-full hover:bg-slate-800 bg-[#1b1b1b] dark:bg-[#1b1b1b] transition-all flex flex-col gap-1 p-3 text-sm font-semibold rounded-xl">
+            <h2>{props.heading}</h2>
+            <p className="text-gray-500">{props.description}</p>
+        </button>
+    );
+}
+
+type MainSectionProps = {
+    isVisible: boolean;
+    messages: [string, string][];
+    handleSendMessage: (e?: React.FormEvent) => void;
+    inputValue: string;
+    setInputValue: React.Dispatch<React.SetStateAction<string>>;
+    messagesEndRef: React.RefObject<HTMLDivElement>;
+    isLoading: boolean;
+};
+
+function MainSection({
+    isVisible,
+    messages,
+    handleSendMessage,
+    inputValue,
+    setInputValue,
+    messagesEndRef,
+    isLoading,
+}: MainSectionProps) {
+    return (
+        <>
             {/* main */}
             {isVisible && (
                 <main
@@ -133,15 +184,15 @@ export default function MainChat() {
                     {messages.map(([sender, text], index) => (
                         <div key={index}>
                             {sender === "user" ? (
-                                <div className="flex items-center justify-end">
+                                <div className="flex items-start justify-end">
                                     <div className="p-2 bg-[#1f1f1f] rounded-xl max-w-[70%] ml-2">
                                         {text}
                                     </div>
                                     <img src="/assets/user-icon.svg" alt="User" className="h-8 w-8 ml-2 bg-white rounded-full p-1" />
                                 </div>
                             ) : (
-                                <div className="flex items-center">
-                                    <img src="/assets/chatgpt-log.svg" alt="ChatGPT" className="h-8 w-8 mr-2 bg-white rounded-full p-1" />
+                                <div className="flex items-start">
+                                    <img src="/assets/chatgpt-log.svg" alt="ChatGPT" className="h-8 w-8 mr-2 bg-white rounded-full p-1 mt-2" />
                                     <div className="p-2 rounded-xl mr-auto">
                                         {text}
                                     </div>
@@ -149,6 +200,14 @@ export default function MainChat() {
                             )}
                         </div>
                     ))}
+                    {isLoading && (
+                        <div className="flex items-start">
+                            <img src="/assets/chatgpt-log.svg" alt="ChatGPT" className="h-8 w-8 mr-2 bg-white rounded-full p-1 mt-2" />
+                            <div className="p-2 rounded-xl mr-auto">
+                                <div className="loader"></div>
+                            </div>
+                        </div>
+                    )}
                     <div ref={messagesEndRef} />
                 </div>
 
@@ -160,32 +219,23 @@ export default function MainChat() {
                         value={inputValue}
                         onChange={(e) => setInputValue(e.target.value)}
                         className="w-full h-12 bg-[#1f1f1f] dark:bg-[#1f1f1f] rounded-xl px-4"
+                        disabled={isLoading}
                     />
                     <button
                         type="submit"
-                        className="text-black hover:opacity-80 bg-slate-500 w-12 h-12 rounded-xl flex items-center justify-center"
+                        className={`text-black hover:opacity-80 bg-slate-500 w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-200 ${isLoading ? 'bg-slate-600' : ''}`}
+                        disabled={isLoading}
                     >
                         <FaPaperPlane />
                     </button>
-                    <button className="text-black hover:opacity-80 bg-slate-500 w-12 h-12 rounded-xl flex items-center justify-center">
+                    <button
+                        className={`text-black hover:opacity-80 bg-slate-500 w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-200 ${isLoading ? 'bg-slate-600' : ''}`}
+                        disabled={isLoading}
+                    >
                         <FaMicrophone />
                     </button>
                 </form>
             </section>
-        </div>
-    );
-};
-
-type CardProp = {
-    heading: string;
-    description: string;
-};
-
-function Card(props: CardProp) {
-    return (
-        <button className="w-full hover:bg-slate-800 bg-[#1b1b1b] dark:bg-[#1b1b1b] transition-all flex flex-col gap-1 p-3 text-sm font-semibold rounded-xl">
-            <h2>{props.heading}</h2>
-            <p className="text-gray-500">{props.description}</p>
-        </button>
+        </>
     );
 }

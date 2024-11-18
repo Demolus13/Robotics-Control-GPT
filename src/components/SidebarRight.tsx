@@ -26,6 +26,10 @@ const timelineData: Timeline[] = [
     label: "Open Manipulator X",
     timelines: [
       {
+        href: "main-chat",
+        title: "Main Chat",
+      },
+      {
         href: "calibration-workspace",
         title: "Calibration Workspace",
       },
