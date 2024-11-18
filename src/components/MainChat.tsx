@@ -3,6 +3,7 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import { FaChevronDown, FaMicrophone, FaPaperPlane } from "react-icons/fa";
+import { useRecordVoice } from "@/hooks/useRecordVoice"
 
 const models = ["ChatGPT 3.5", "ChatGPT 4.0", "ChatGPT 4.5"];
 
@@ -155,6 +156,7 @@ function MainSection({
     messagesEndRef,
     isLoading,
 }: MainSectionProps) {
+    const { startRecording, stopRecording, recording } = useRecordVoice();
     return (
         <>
             {/* main */}
@@ -229,6 +231,11 @@ function MainSection({
                         <FaPaperPlane />
                     </button>
                     <button
+                        type="button"
+                        // onMouseDown={startRecording}
+                        // onMouseUp={stopRecording}
+                        // onTouchStart={startRecording}
+                        // onTouchEnd={stopRecording}
                         className={`text-black hover:opacity-80 bg-slate-500 w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-200 ${isLoading ? 'bg-slate-600' : ''}`}
                         disabled={isLoading}
                     >
