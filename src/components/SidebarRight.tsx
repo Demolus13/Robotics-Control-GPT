@@ -3,15 +3,15 @@
 
 import Link from "next/link";
 import React, { useState } from "react";
-import { BsArchiveFill } from "react-icons/bs";
-import { FaEdit, FaChevronLeft, FaChevronRight } from "react-icons/fa";
-import { FiEdit } from "react-icons/fi";
-import { BsThreeDots } from "react-icons/bs";
+import { FaChevronRight } from "react-icons/fa";
 import { TbMinusVertical } from "react-icons/tb";
 import { cn } from "@/utils/cn";
 import { usePathname } from "next/navigation";
 
-type Props = {};
+type SidebarRightProps = {
+  setCurrentSection: (section: string) => void;
+  currentSection: string;
+};
 
 type Timeline = {
   label: string;
@@ -26,7 +26,7 @@ const timelineData: Timeline[] = [
     label: "Open Manipulator X",
     timelines: [
       {
-        href: "main-chat",
+        href: "",
         title: "Main Chat",
       },
       {
@@ -41,7 +41,7 @@ const timelineData: Timeline[] = [
   },
 ];
 
-export default function SidebarRight({ }: Props) {
+export default function SidebarRight({ setCurrentSection, currentSection }: SidebarRightProps) {
   const [isSidebar, setSidebar] = useState(true);
 
   function toggleSidebar() {
@@ -76,7 +76,7 @@ export default function SidebarRight({ }: Props) {
           {/* timeles */}
           <div className="w-full flex flex-col gap-5">
             {timelineData.map((d, i) => (
-              <Timeline key={i} label={d.label} timelines={d.timelines} />
+              <Timeline key={i} label={d.label} timelines={d.timelines} setCurrentSection={setCurrentSection} currentSection={currentSection} />
             ))}
           </div>
         </div>
@@ -94,25 +94,31 @@ export default function SidebarRight({ }: Props) {
   );
 }
 
-function Timeline(props: Timeline) {
-  const pathName = usePathname();
+type TimelineProps = Timeline & {
+  setCurrentSection: (section: string) => void;
+  currentSection: string;
+};
+
+function Timeline({ label, timelines, setCurrentSection, currentSection }: TimelineProps) {
 
   return (
-    <div className="w-full flex flex-col gap-2">
-      {props.timelines.map((d, i) => (
-        <Link
-          key={i}
-          className={cn(
-            "p-2 group ease-in-out duration-300 bg-slate-900 hover:bg-slate-800 rounded-lg transition-all items-center text-sm w-full flex justify-between",
-            { "bg-slate-800": `/${d.href}` === pathName }
-          )}
-          href={d.href}
-        >
-          <div className="text-ellipsis overflow-hidden w-[80%] whitespace-nowrap">
-            {d.title}
-          </div>
-        </Link>
-      ))}
-    </div>
+      <div className="w-full flex flex-col gap-2">
+          {timelines.map((d, i) => (
+              <button
+                  key={i}
+                  className={cn(
+                      "p-2 group ease-in-out duration-300 bg-slate-900 hover:bg-slate-800 rounded-lg transition-all items-center text-sm w-full flex justify-between",
+                      { "bg-slate-800": d.href === currentSection }
+                  )}
+                  onClick={() => {
+                    setCurrentSection(d.href);
+                  }}
+              >
+                    <div className="text-ellipsis overflow-hidden w-[80%] whitespace-nowrap text-left">
+                      {d.title}
+                    </div>
+              </button>
+          ))}
+      </div>
   );
 }
